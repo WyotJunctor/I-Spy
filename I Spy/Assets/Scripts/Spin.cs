@@ -8,6 +8,7 @@ public class Spin : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         axis = Random.onUnitSphere;
+        spinSpeed = Random.Range(0, spinSpeed);
     }
 
     // Update is called once per frame
