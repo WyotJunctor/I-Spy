@@ -14,7 +14,7 @@ public class Spin : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    void FixedUpdate() {
         //transform.Rotate(axis, spinSpeed * Time.deltaTime);
         rb.angularVelocity = new Vector3(spinSpeed/2f, spinSpeed, 0);
     }

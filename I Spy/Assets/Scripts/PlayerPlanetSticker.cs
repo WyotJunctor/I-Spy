@@ -18,7 +18,7 @@ public class PlayerPlanetSticker : MonoBehaviour
     void FixedUpdate()
     {
         player_pivot.position = planet_pivot.position;
-        player_pivot.rotation = planet_pivot.rotation;
+        player_pivot.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(planet_pivot.forward, Vector3.up));
     }
 
     private void OnCollisionEnter(Collision collision)
