@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Spin : MonoBehaviour {
     Vector3 axis;
-    public float spinSpeed;
+    float spinSpeed = 35;
     Rigidbody rb;
     // Start is called before the first frame update
     void Start() {
@@ -15,8 +15,8 @@ public class Spin : MonoBehaviour {
 
     // Update is called once per frame
     void FixedUpdate() {
-        //transform.Rotate(axis, spinSpeed * Time.deltaTime);
-        rb.angularVelocity = new Vector3(spinSpeed/2f, spinSpeed, 0);
+        float s = spinSpeed * Time.deltaTime;
+        rb.angularVelocity = new Vector3(axis.x * s , axis.y * s, axis.z * s);
     }
 
     public float FindQuaternionTwist(Quaternion q, Vector3 axis)

@@ -35,6 +35,8 @@ public class PlayerPlanetSticker : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (!player.m_IsGrounded)
+            return;
         if (collision.collider.transform == planet_pivot.parent)
             return;
         pivoted = true;
