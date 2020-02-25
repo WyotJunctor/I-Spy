@@ -121,7 +121,7 @@ PrefabInstance:
     - target: {fileID: 3388386114060059397, guid: 89b44b2a0b8eb1b4a83713376738a2d9,
         type: 3}
       propertyPath: spinSpeed
-      value: 1
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 6628899740869395229, guid: 89b44b2a0b8eb1b4a83713376738a2d9,
         type: 3}

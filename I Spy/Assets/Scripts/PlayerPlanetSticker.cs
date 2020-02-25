@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class PlayerPlanetSticker : MonoBehaviour
 {
     Transform planet_pivot, player_pivot;
+    RigidbodyFirstPersonController player;
     bool pivoted;
 
     // Start is called before the first frame update
@@ -12,13 +14,23 @@ public class PlayerPlanetSticker : MonoBehaviour
     {
         planet_pivot = transform.FindDeepParent("planet_pivot");
         player_pivot = transform.FindDeepParent("player_pivot");
+        player = GetComponent<RigidbodyFirstPersonController>();
+    }
+
+    private void Update()
+    {
+        if (!player.m_IsGrounded)
+        {
+            planet_pivot.parent = player_pivot.parent;
+        }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        player_pivot.position = planet_pivot.position;
-        player_pivot.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(planet_pivot.forward, Vector3.up));
+        if (pivoted)
+            player_pivot.position = planet_pivot.position;
+            player_pivot.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(planet_pivot.forward, Vector3.up));
     }
 
     private void OnCollisionEnter(Collision collision)
