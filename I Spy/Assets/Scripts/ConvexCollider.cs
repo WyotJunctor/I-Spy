@@ -16,6 +16,7 @@ public class ConvexCollider : MonoBehaviour
         rb.drag = master.drag;
         rb.angularDrag = master.angularDrag;
         rb.isKinematic = true;
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
     }
 
     // Update is called once per frame
