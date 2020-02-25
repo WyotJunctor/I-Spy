@@ -11,8 +11,8 @@ public class Spawner : MonoBehaviour {
         for (int i = 0; i < numObjects; i++) {
             GameObject obj = Instantiate(objects[Random.Range(0, objects.Count)], Random.onUnitSphere * Random.Range(0, maxSpawnDistance), Quaternion.Euler(Random.insideUnitSphere * 360));
             obj.transform.parent = transform;
-            obj.transform.localScale = Vector3.one * Random.Range(700f, 1000f);
-            obj.GetComponent<Rigidbody>().rotation = Quaternion.Euler(Random.insideUnitSphere * 360);
+            obj.transform.localScale = Vector3.one * Random.Range(1f, 5f);
+            obj.GetComponentInChildren<Rigidbody>().rotation = Quaternion.Euler(Random.insideUnitSphere * 360);
         }
     }
 }
