@@ -15,25 +15,20 @@ public class PlayerPlanetSticker : MonoBehaviour
     }
 
     // Update is called once per frame
-    void LateUpdate()
+    void FixedUpdate()
     {
-        if (pivoted)
-        {
-            player_pivot.position = planet_pivot.position;
-        }
+        player_pivot.position = planet_pivot.position;
+        player_pivot.rotation = planet_pivot.rotation;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.collider.transform == planet_pivot.parent)
+            return;
+        pivoted = true;
         planet_pivot.parent = collision.collider.transform;
         planet_pivot.position = transform.position;
-        transform.position = planet_pivot.position;
         player_pivot.position = transform.position;
-        pivoted = true;
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        
+        transform.position = player_pivot.position;
     }
 }
