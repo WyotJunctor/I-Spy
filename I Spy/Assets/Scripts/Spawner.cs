@@ -20,14 +20,22 @@ public class Spawner : MonoBehaviour {
                 float z = Random.Range(-maxSpawnDistance, maxSpawnDistance);
                 pos = new Vector3(x, y, z);
             } while (pos.magnitude <= minSpawnDistance);
-            GameObject obj = Instantiate(objects[Random.Range(0, objects.Count)], pos, Quaternion.Euler(Random.insideUnitSphere * 360));
+            GameObject obj = Instantiate(randomObject(), pos, randomAngle());
             obj.transform.localScale = Vector3.one * Random.Range(3f, 7f);
             obj.transform.parent = transform;
-            obj.GetComponentInChildren<Rigidbody>().rotation = Quaternion.Euler(Random.insideUnitSphere * 360);
+            obj.GetComponentInChildren<Rigidbody>().rotation = randomAngle();
         }
     }
 
     int numObjectsFor(float dense, float dist) {
         return (int)(dense * smallification * Mathf.Pow(dist, 3));
+    }
+
+    GameObject randomObject() {
+        return objects[Random.Range(0, objects.Count)];
+    }
+
+    Quaternion randomAngle() {
+        return Quaternion.Euler(Random.insideUnitSphere * 360);
     }
 }
