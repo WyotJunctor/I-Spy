@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Spin : MonoBehaviour {
     Vector3 axis;
-    float spinSpeed = 35;
+    float spinSpeed = 15;
     Rigidbody rb;
     // Start is called before the first frame update
     void Start() {
@@ -14,5 +14,4 @@ public class Spin : MonoBehaviour {
         float s = spinSpeed * Time.deltaTime;
         rb.angularVelocity = new Vector3(axis.x * s, axis.y * s, axis.z * s);
     }
-
 }
