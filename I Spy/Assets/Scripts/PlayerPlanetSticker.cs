@@ -19,6 +19,7 @@ public class PlayerPlanetSticker : MonoBehaviour {
     private void Update() {
         if (!player.m_IsGrounded) {
             planet_pivot.parent = player_pivot.parent;
+            pivoted = false;
         }
     }
 
