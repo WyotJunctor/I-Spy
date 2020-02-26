@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour {
     public List<GameObject> objects;
-    float minSpawnDistance = 300f;
+    float minSpawnDistance = 30f;
     public float density;
     const float smallification = 0.0000001f;
     public float maxSpawnDistance;
