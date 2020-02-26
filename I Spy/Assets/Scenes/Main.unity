@@ -266,8 +266,8 @@ MonoBehaviour:
   - {fileID: 809783695767803807, guid: 0a442fe5377b85044b766f8b3541dd4b, type: 3}
   - {fileID: 6503418679325019168, guid: 4b6c4f2eb7ac1dc4b8ddf2e38d3d91e4, type: 3}
   - {fileID: 7424350187728747231, guid: c54809d81580eb94598ea52a709a907e, type: 3}
-  numObjects: 200
-  maxSpawnDistance: 1000
+  density: 5
+  maxSpawnDistance: 800
 --- !u!4 &590912987
 Transform:
   m_ObjectHideFlags: 0

@@ -4,17 +4,30 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour {
     public List<GameObject> objects;
-    public int numObjects;
-    float minSpawnDistance = 50f;
+    float minSpawnDistance = 300f;
+    public float density;
+    const float smallification = 0.0000001f;
     public float maxSpawnDistance;
     // Start is called before the first frame update
     void Start() {
+        int numObjects = numObjectsFor(density, maxSpawnDistance);
+        print(numObjects);
         for (int i = 0; i < numObjects; i++) {
-            Vector3 pos = Random.onUnitSphere * Random.Range(minSpawnDistance, maxSpawnDistance);
+            Vector3 pos;
+            do {
+                float x = Random.Range(-maxSpawnDistance, maxSpawnDistance);
+                float y = Random.Range(-maxSpawnDistance, maxSpawnDistance);
+                float z = Random.Range(-maxSpawnDistance, maxSpawnDistance);
+                pos = new Vector3(x, y, z);
+            } while (pos.magnitude <= minSpawnDistance);
             GameObject obj = Instantiate(objects[Random.Range(0, objects.Count)], pos, Quaternion.Euler(Random.insideUnitSphere * 360));
-            obj.transform.parent = transform;
             obj.transform.localScale = Vector3.one * Random.Range(3f, 7f);
+            obj.transform.parent = transform;
             obj.GetComponentInChildren<Rigidbody>().rotation = Quaternion.Euler(Random.insideUnitSphere * 360);
         }
+    }
+
+    int numObjectsFor(float dense, float dist) {
+        return (int)(dense * smallification * Mathf.Pow(dist, 3));
     }
 }
