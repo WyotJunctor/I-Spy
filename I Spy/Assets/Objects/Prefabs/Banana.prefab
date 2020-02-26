@@ -118,6 +118,11 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 300
       objectReference: {fileID: 0}
+    - target: {fileID: 7959995952936285900, guid: d7905ebf65b5f2f4bb77e5a994b1a4db,
+        type: 3}
+      propertyPath: m_AngularDrag
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d7905ebf65b5f2f4bb77e5a994b1a4db, type: 3}
 --- !u!4 &408535293857681516 stripped

@@ -11,7 +11,6 @@ public class Spawner : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         int numObjects = numObjectsFor(density, maxSpawnDistance);
-        print(numObjects);
         for (int i = 0; i < numObjects; i++) {
             Vector3 pos;
             do {
