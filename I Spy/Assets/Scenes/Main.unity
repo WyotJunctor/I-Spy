@@ -491,6 +491,11 @@ PrefabInstance:
       propertyPath: spinSpeed
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2049306825706114884, guid: d7905ebf65b5f2f4bb77e5a994b1a4db,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5835648803415870110, guid: d7905ebf65b5f2f4bb77e5a994b1a4db,
         type: 3}
       propertyPath: m_Name
@@ -514,22 +519,22 @@ PrefabInstance:
     - target: {fileID: 7396945182435817613, guid: d7905ebf65b5f2f4bb77e5a994b1a4db,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.6619111
+      value: -0.6531184
       objectReference: {fileID: 0}
     - target: {fileID: 7396945182435817613, guid: d7905ebf65b5f2f4bb77e5a994b1a4db,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.24874443
+      value: -0.6340574
       objectReference: {fileID: 0}
     - target: {fileID: 7396945182435817613, guid: d7905ebf65b5f2f4bb77e5a994b1a4db,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.24874443
+      value: -0.2709919
       objectReference: {fileID: 0}
     - target: {fileID: 7396945182435817613, guid: d7905ebf65b5f2f4bb77e5a994b1a4db,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.6619111
+      value: 0.31300342
       objectReference: {fileID: 0}
     - target: {fileID: 7396945182435817613, guid: d7905ebf65b5f2f4bb77e5a994b1a4db,
         type: 3}
@@ -544,7 +549,7 @@ PrefabInstance:
     - target: {fileID: 7396945182435817613, guid: d7905ebf65b5f2f4bb77e5a994b1a4db,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 89.99999
+      value: 3.7389984
       objectReference: {fileID: 0}
     - target: {fileID: 7396945182435817613, guid: d7905ebf65b5f2f4bb77e5a994b1a4db,
         type: 3}
@@ -654,7 +659,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11400004, guid: c6453f8e1f814744d8b94e5a6d1f9942, type: 3}
       propertyPath: advancedSettings.airControl
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c6453f8e1f814744d8b94e5a6d1f9942, type: 3}
