@@ -23,18 +23,23 @@ public class Spawner : MonoBehaviour {
             obj.transform.localScale = Vector3.one * Random.Range(7f, 15f);
             obj.transform.parent = transform;
             obj.GetComponentInChildren<Rigidbody>().rotation = randomAngle();
+            //print(obj.name);
+            //List<Vector3> randomTri = obj.GetComponent<ObjectInfo>().getRandomTri();
+            //foreach (Vector3 thing in randomTri) {
+            //    print(thing * 100f);
+            //}
         }
-    }
 
-    int numObjectsFor(float dense, float dist) {
-        return (int)(dense * smallification * Mathf.Pow(dist, 3));
-    }
+        int numObjectsFor(float dense, float dist) {
+            return (int)(dense * smallification * Mathf.Pow(dist, 3));
+        }
 
-    GameObject randomObject() {
-        return objects[Random.Range(0, objects.Count)];
-    }
+        GameObject randomObject() {
+            return objects[Random.Range(0, objects.Count)];
+        }
 
-    Quaternion randomAngle() {
-        return Quaternion.Euler(Random.insideUnitSphere * 360);
+        Quaternion randomAngle() {
+            return Quaternion.Euler(Random.insideUnitSphere * 360);
+        }
     }
 }
