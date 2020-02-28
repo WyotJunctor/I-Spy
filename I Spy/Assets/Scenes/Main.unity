@@ -261,11 +261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a760fab4affa410f83d791137f4824b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objects:
-  - {fileID: 5278190174968011018, guid: 0ee82b88c06075f49bcb34e21b005baf, type: 3}
-  - {fileID: 809783695767803807, guid: 0a442fe5377b85044b766f8b3541dd4b, type: 3}
-  - {fileID: 6503418679325019168, guid: 4b6c4f2eb7ac1dc4b8ddf2e38d3d91e4, type: 3}
-  - {fileID: 7424350187728747231, guid: c54809d81580eb94598ea52a709a907e, type: 3}
+  planetoid_list: {fileID: 11400000, guid: 1ee5d793bfbb0344a9bec0431df5b4e5, type: 2}
   density: 5
   maxSpawnDistance: 800
 --- !u!4 &590912987
@@ -664,6 +660,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11400004, guid: c6453f8e1f814744d8b94e5a6d1f9942, type: 3}
       propertyPath: advancedSettings.airControl
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400004, guid: c6453f8e1f814744d8b94e5a6d1f9942, type: 3}
+      propertyPath: advancedSettings.shellOffset
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400004, guid: c6453f8e1f814744d8b94e5a6d1f9942, type: 3}
+      propertyPath: advancedSettings.groundCheckDistance
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400004, guid: c6453f8e1f814744d8b94e5a6d1f9942, type: 3}
+      propertyPath: advancedSettings.stickToGroundHelperDistance
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

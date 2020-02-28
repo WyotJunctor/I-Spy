@@ -122,3 +122,19 @@ public static class TransformDeepChildExtension
         return null;
     }
 }
+ 
+public static class MeshExtensions
+{
+    public static Mesh Copy(this Mesh mesh)
+    {
+        var copy = new Mesh();
+        foreach (var property in typeof(Mesh).GetProperties())
+        {
+            if (property.GetSetMethod() != null && property.GetGetMethod() != null)
+            {
+                property.SetValue(copy, property.GetValue(mesh, null), null);
+            }
+        }
+        return copy;
+    }
+}

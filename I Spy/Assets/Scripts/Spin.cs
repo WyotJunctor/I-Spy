@@ -10,7 +10,7 @@ public class Spin : MonoBehaviour {
     void Start() {
         axis = Random.onUnitSphere;
         spinSpeed = Random.Range(spinSpeed / 2, spinSpeed);
-        rb = GetComponent<Rigidbody>();
+        rb = GetComponentInChildren<Rigidbody>();
         float s = spinSpeed * Time.deltaTime;
         rb.angularVelocity = new Vector3(axis.x * s, axis.y * s, axis.z * s);
     }

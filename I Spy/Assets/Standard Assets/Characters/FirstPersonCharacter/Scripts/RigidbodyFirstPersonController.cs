@@ -12,6 +12,7 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             public float BackwardSpeed = 4.0f;  // Speed when walking backwards
             public float StrafeSpeed = 4.0f;    // Speed when walking sideways
             public float RunMultiplier = 2.0f;   // Speed when sprinting
+            [HideInInspector] public float max_speed;
             public KeyCode RunKey = KeyCode.LeftShift;
             public float JumpForce = 30f;
             public AnimationCurve SlopeCurveModifier = new AnimationCurve(new Keyframe(-90.0f, 1.0f), new Keyframe(0.0f, 1.0f), new Keyframe(90.0f, 0.0f));
@@ -44,6 +45,7 @@ namespace UnityStandardAssets.Characters.FirstPerson {
                     m_Running = false;
                 }
 #endif
+                max_speed = CurrentTargetSpeed;
             }
 
 #if !MOBILE_INPUT
@@ -71,15 +73,17 @@ namespace UnityStandardAssets.Characters.FirstPerson {
         public AdvancedSettings advancedSettings = new AdvancedSettings();
 
 
-        private Rigidbody m_RigidBody;
+        private Rigidbody rb;
         private CapsuleCollider m_Capsule;
         private float m_YRotation;
         private Vector3 m_GroundContactNormal;
         private bool m_Jump, m_PreviouslyGrounded, m_Jumping; public bool m_IsGrounded;
 
+        LayerMask layer_mask;
+
 
         public Vector3 Velocity {
-            get { return m_RigidBody.velocity; }
+            get { return rb.velocity; }
         }
 
         public bool Grounded {
@@ -103,9 +107,10 @@ namespace UnityStandardAssets.Characters.FirstPerson {
 
 
         private void Start() {
-            m_RigidBody = GetComponent<Rigidbody>();
+            rb = GetComponent<Rigidbody>();
             m_Capsule = GetComponent<CapsuleCollider>();
             mouseLook.Init(transform, cam.transform);
+            layer_mask = ~LayerMask.GetMask("PlanetoidPlayerCollision");
         }
 
 
@@ -122,35 +127,37 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             GroundCheck();
             Vector2 input = GetInput();
 
-            if ((Mathf.Abs(input.x) > float.Epsilon || Mathf.Abs(input.y) > float.Epsilon) && (advancedSettings.airControl || m_IsGrounded)) {
+            if (Mathf.Abs(input.x) > float.Epsilon || Mathf.Abs(input.y) > float.Epsilon) {
                 // always move along the camera forward as it is the direction that it being aimed at
                 Vector3 desiredMove = cam.transform.forward * input.y + cam.transform.right * input.x;
                 desiredMove = Vector3.ProjectOnPlane(desiredMove, m_GroundContactNormal).normalized;
 
-                desiredMove.x = desiredMove.x * movementSettings.CurrentTargetSpeed;
-                desiredMove.z = desiredMove.z * movementSettings.CurrentTargetSpeed;
-                desiredMove.y = desiredMove.y * movementSettings.CurrentTargetSpeed;
-                if (m_RigidBody.velocity.sqrMagnitude <
-                    (movementSettings.CurrentTargetSpeed * movementSettings.CurrentTargetSpeed)) {
-                    m_RigidBody.AddForce(desiredMove * SlopeMultiplier(), ForceMode.Impulse);
+                desiredMove *= movementSettings.CurrentTargetSpeed;
+
+                rb.AddForce(desiredMove * SlopeMultiplier(), ForceMode.Impulse);
+
+                if (rb.velocity.magnitude > movementSettings.max_speed)
+                {
+                    rb.velocity = rb.velocity.normalized * movementSettings.max_speed;
                 }
             }
 
             if (m_IsGrounded) {
-                m_RigidBody.drag = 5f;
+                rb.drag = 5f;
 
                 if (m_Jump) {
-                    m_RigidBody.drag = 0f;
-                    m_RigidBody.velocity = new Vector3(m_RigidBody.velocity.x, 0f, m_RigidBody.velocity.z);
-                    m_RigidBody.AddForce(new Vector3(0f, movementSettings.JumpForce, 0f), ForceMode.Impulse);
+                    rb.drag = 0f;
+                    rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+                    rb.AddForce(new Vector3(0f, movementSettings.JumpForce, 0f), ForceMode.Impulse);
                     m_Jumping = true;
                 }
 
-                if (!m_Jumping && Mathf.Abs(input.x) < float.Epsilon && Mathf.Abs(input.y) < float.Epsilon && m_RigidBody.velocity.magnitude < 1f) {
-                    m_RigidBody.Sleep();
+                if (!m_Jumping && Mathf.Abs(input.x) < float.Epsilon && Mathf.Abs(input.y) < float.Epsilon && rb.velocity.magnitude < 1f) {
+                    rb.velocity = Vector3.zero;
+                    rb.Sleep();
                 }
             } else {
-                m_RigidBody.drag = 0f;
+                rb.drag = 0f;
                 if (m_PreviouslyGrounded && !m_Jumping) {
                     StickToGroundHelper();
                 }
@@ -169,9 +176,9 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             RaycastHit hitInfo;
             if (Physics.SphereCast(transform.position, m_Capsule.radius * (1.0f - advancedSettings.shellOffset), Vector3.down, out hitInfo,
                                    ((m_Capsule.height / 2f) - m_Capsule.radius) +
-                                   advancedSettings.stickToGroundHelperDistance, ~(1 << LayerMask.NameToLayer("PlanetoidCollision")), QueryTriggerInteraction.Ignore)) {
+                                   advancedSettings.stickToGroundHelperDistance, layer_mask, QueryTriggerInteraction.Ignore)) {
                 if (Mathf.Abs(Vector3.Angle(hitInfo.normal, Vector3.up)) < 85f) {
-                    m_RigidBody.velocity = Vector3.ProjectOnPlane(m_RigidBody.velocity, hitInfo.normal);
+                    rb.velocity = Vector3.ProjectOnPlane(rb.velocity, hitInfo.normal);
                 }
             }
         }
@@ -198,24 +205,26 @@ namespace UnityStandardAssets.Characters.FirstPerson {
 
             mouseLook.LookRotation(transform, cam.transform);
 
+            /*
             if (m_IsGrounded || advancedSettings.airControl) {
                 // Rotate the rigidbody velocity to match the new direction that the character is looking
                 Quaternion velRotation = Quaternion.AngleAxis(transform.eulerAngles.y - oldYRotation, Vector3.up);
-                m_RigidBody.velocity = velRotation * m_RigidBody.velocity;
+                rb.velocity = velRotation * rb.velocity;
             }
+            */
         }
 
         /// sphere cast down just beyond the bottom of the capsule to see if the capsule is colliding round the bottom
         private void GroundCheck() {
             m_PreviouslyGrounded = m_IsGrounded;
             RaycastHit hitInfo;
-            if (Physics.SphereCast(transform.position, m_Capsule.radius * (1.0f - advancedSettings.shellOffset), Vector3.down, out hitInfo,
-                                   ((m_Capsule.height / 2f) - m_Capsule.radius) + advancedSettings.groundCheckDistance, ~(1 << LayerMask.NameToLayer("PlanetoidCollision")), QueryTriggerInteraction.Ignore)) {
+            if (Physics.SphereCast(transform.position, m_Capsule.radius * (1.0f - advancedSettings.shellOffset), -transform.up, out hitInfo,
+                                   ((m_Capsule.height / 2f) - m_Capsule.radius) + advancedSettings.groundCheckDistance, layer_mask, QueryTriggerInteraction.Ignore)) {
                 m_IsGrounded = true;
                 m_GroundContactNormal = hitInfo.normal;
             } else {
                 m_IsGrounded = false;
-                m_GroundContactNormal = Vector3.up;
+                m_GroundContactNormal = transform.up;
             }
             if (!m_PreviouslyGrounded && m_IsGrounded && m_Jumping) {
                 m_Jumping = false;
