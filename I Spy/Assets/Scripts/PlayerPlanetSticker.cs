@@ -16,15 +16,15 @@ public class PlayerPlanetSticker : MonoBehaviour {
         player = GetComponent<RigidbodyFirstPersonController>();
     }
 
-    private void Update() {
+    // Update is called once per frame
+    void FixedUpdate() {
         if (!player.m_IsGrounded) {
+            if (planet_pivot.parent != player_pivot.parent) {
+                print("player unpivoting from " + planet_pivot.parent.gameObject.name);
+            }
             planet_pivot.parent = player_pivot.parent;
             pivoted = false;
         }
-    }
-
-    // Update is called once per frame
-    void FixedUpdate() {
         if (pivoted) {
             player_pivot.position = planet_pivot.position;
             //player_pivot.position = Vector3.Lerp(transform.position, planet_pivot.position, Time.deltaTime * lerp_speed);
@@ -33,15 +33,27 @@ public class PlayerPlanetSticker : MonoBehaviour {
     }
 
     private void OnCollisionEnter(Collision collision) {
-        print("HAHA");
-        if (!player.m_IsGrounded)
+        print("player collided with " + collision.collider.gameObject.name);
+        if (!player.m_IsGrounded) {
+            //print("player colliding and not grounded");
             return;
-        if (collision.collider.transform == planet_pivot.parent)
+        }
+        if (collision.collider.transform == planet_pivot.parent) {
+            print("player colliding again with previous pivot");
             return;
+        }
+        print("player pivoting on " + collision.collider.gameObject.name);
         pivoted = true;
         planet_pivot.parent = collision.collider.transform;
         planet_pivot.position = transform.position;
         player_pivot.position = transform.position;
         transform.position = player_pivot.position;
+    }
+
+    public bool MyGroundCheck() {
+        //Physics.SphereCast(transform.position, m_Capsule.radius * (1.0f - advancedSettings.shellOffset), -transform.up, out hitInfo,
+        //((m_Capsule.height / 2f) - m_Capsule.radius) + advancedSettings.groundCheckDistance, layer_mask, QueryTriggerInteraction.Ignore)
+        //RaycastHit raycastHit = Physics.Raycast()
+        return true;
     }
 }

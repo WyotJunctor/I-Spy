@@ -110,7 +110,8 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             rb = GetComponent<Rigidbody>();
             m_Capsule = GetComponent<CapsuleCollider>();
             mouseLook.Init(transform, cam.transform);
-            layer_mask = ~LayerMask.GetMask("PlanetoidPlayerCollision");
+            string[] goodLayers = { "PlanetoidPlyaerCollision" };
+            layer_mask = ~LayerMask.GetMask(goodLayers);
         }
 
 
@@ -136,8 +137,7 @@ namespace UnityStandardAssets.Characters.FirstPerson {
 
                 rb.AddForce(desiredMove * SlopeMultiplier(), ForceMode.Impulse);
 
-                if (rb.velocity.magnitude > movementSettings.max_speed)
-                {
+                if (rb.velocity.magnitude > movementSettings.max_speed) {
                     rb.velocity = rb.velocity.normalized * movementSettings.max_speed;
                 }
             }

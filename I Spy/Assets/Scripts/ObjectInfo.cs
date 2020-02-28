@@ -9,7 +9,7 @@ public class ObjectInfo : MonoBehaviour {
             if (mf.mesh.isReadable) {
                 meshes.Add(mf.mesh);
             } else {
-                print("mesh is not readable: " + mf.mesh.name);
+                print("mesh is not readable: " + mf.mesh.name + " in " + gameObject.name);
             }
         }
     }
