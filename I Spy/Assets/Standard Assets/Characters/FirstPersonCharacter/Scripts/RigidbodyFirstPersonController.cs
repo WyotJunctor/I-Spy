@@ -13,6 +13,7 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             public float StrafeSpeed = 4.0f;    // Speed when walking sideways
             public float RunMultiplier = 2.0f;   // Speed when sprinting
             [HideInInspector] public float max_speed;
+            [HideInInspector] public float maxMidairHorizSpeed;
             public KeyCode RunKey = KeyCode.LeftShift;
             public float JumpForce = 30f;
             public AnimationCurve SlopeCurveModifier = new AnimationCurve(new Keyframe(-90.0f, 1.0f), new Keyframe(0.0f, 1.0f), new Keyframe(90.0f, 0.0f));
@@ -20,35 +21,6 @@ namespace UnityStandardAssets.Characters.FirstPerson {
 
 #if !MOBILE_INPUT
             private bool m_Running;
-#endif
-
-            public void UpdateDesiredTargetSpeed(Vector2 input) {
-                if (input == Vector2.zero) return;
-                if (input.x > 0 || input.x < 0) {
-                    //strafe
-                    CurrentTargetSpeed = StrafeSpeed;
-                }
-                if (input.y < 0) {
-                    //backwards
-                    CurrentTargetSpeed = BackwardSpeed;
-                }
-                if (input.y > 0) {
-                    //forwards
-                    //handled last as if strafing and moving forward at the same time forwards speed should take precedence
-                    CurrentTargetSpeed = ForwardSpeed;
-                }
-#if !MOBILE_INPUT
-                if (Input.GetKey(RunKey)) {
-                    CurrentTargetSpeed *= RunMultiplier;
-                    m_Running = true;
-                } else {
-                    m_Running = false;
-                }
-#endif
-                max_speed = CurrentTargetSpeed;
-            }
-
-#if !MOBILE_INPUT
             public bool Running {
                 get { return m_Running; }
             }
@@ -78,6 +50,7 @@ namespace UnityStandardAssets.Characters.FirstPerson {
         private float m_YRotation;
         private Vector3 m_GroundContactNormal;
         private bool m_Jump, m_PreviouslyGrounded, m_Jumping; public bool m_IsGrounded;
+        private float airControlFactor = 30f;
 
         LayerMask layer_mask;
 
@@ -112,6 +85,7 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             mouseLook.Init(transform, cam.transform);
             string[] goodLayers = { "PlanetoidPlyaerCollision" };
             layer_mask = ~LayerMask.GetMask(goodLayers);
+            movementSettings.maxMidairHorizSpeed = Mathf.Max(movementSettings.ForwardSpeed, movementSettings.BackwardSpeed, movementSettings.StrafeSpeed);
         }
 
 
@@ -135,10 +109,10 @@ namespace UnityStandardAssets.Characters.FirstPerson {
 
                 desiredMove *= movementSettings.CurrentTargetSpeed;
 
-                rb.AddForce(desiredMove * SlopeMultiplier(), ForceMode.Impulse);
-
-                if (rb.velocity.magnitude > movementSettings.max_speed) {
-                    rb.velocity = rb.velocity.normalized * movementSettings.max_speed;
+                if (m_IsGrounded) {
+                    rb.AddForce(desiredMove * SlopeMultiplier(), ForceMode.Impulse);
+                } else if (advancedSettings.airControl) {
+                    rb.AddForce(desiredMove * airControlFactor * SlopeMultiplier());
                 }
             }
 
@@ -191,7 +165,6 @@ namespace UnityStandardAssets.Characters.FirstPerson {
                 x = CrossPlatformInputManager.GetAxis("Horizontal"),
                 y = CrossPlatformInputManager.GetAxis("Vertical")
             };
-            movementSettings.UpdateDesiredTargetSpeed(input);
             return input;
         }
 
@@ -204,14 +177,6 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             float oldYRotation = transform.eulerAngles.y;
 
             mouseLook.LookRotation(transform, cam.transform);
-
-            /*
-            if (m_IsGrounded || advancedSettings.airControl) {
-                // Rotate the rigidbody velocity to match the new direction that the character is looking
-                Quaternion velRotation = Quaternion.AngleAxis(transform.eulerAngles.y - oldYRotation, Vector3.up);
-                rb.velocity = velRotation * rb.velocity;
-            }
-            */
         }
 
         /// sphere cast down just beyond the bottom of the capsule to see if the capsule is colliding round the bottom

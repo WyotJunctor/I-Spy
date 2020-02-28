@@ -49,11 +49,4 @@ public class PlayerPlanetSticker : MonoBehaviour {
         player_pivot.position = transform.position;
         transform.position = player_pivot.position;
     }
-
-    public bool MyGroundCheck() {
-        //Physics.SphereCast(transform.position, m_Capsule.radius * (1.0f - advancedSettings.shellOffset), -transform.up, out hitInfo,
-        //((m_Capsule.height / 2f) - m_Capsule.radius) + advancedSettings.groundCheckDistance, layer_mask, QueryTriggerInteraction.Ignore)
-        //RaycastHit raycastHit = Physics.Raycast()
-        return true;
-    }
 }
