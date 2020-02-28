@@ -20,7 +20,7 @@ public class PlayerPlanetSticker : MonoBehaviour {
     void FixedUpdate() {
         if (!player.m_IsGrounded) {
             if (planet_pivot.parent != player_pivot.parent) {
-                print("player unpivoting from " + planet_pivot.parent.gameObject.name);
+                //print("player unpivoting from " + planet_pivot.parent.gameObject.name);
             }
             planet_pivot.parent = player_pivot.parent;
             pivoted = false;
@@ -33,16 +33,16 @@ public class PlayerPlanetSticker : MonoBehaviour {
     }
 
     private void OnCollisionEnter(Collision collision) {
-        print("player collided with " + collision.collider.gameObject.name);
+        //print("player collided with " + collision.collider.gameObject.name);
         if (!player.m_IsGrounded) {
             //print("player colliding and not grounded");
             return;
         }
         if (collision.collider.transform == planet_pivot.parent) {
-            print("player colliding again with previous pivot");
+            //print("player colliding again with previous pivot");
             return;
         }
-        print("player pivoting on " + collision.collider.gameObject.name);
+        //print("player pivoting on " + collision.collider.gameObject.name);
         pivoted = true;
         planet_pivot.parent = collision.collider.transform;
         planet_pivot.position = transform.position;

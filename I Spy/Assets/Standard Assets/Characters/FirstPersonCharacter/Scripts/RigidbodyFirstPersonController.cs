@@ -16,7 +16,7 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             [HideInInspector] public float maxMidairHorizSpeed;
             public KeyCode RunKey = KeyCode.LeftShift;
             public float JumpForce = 30f;
-            public AnimationCurve SlopeCurveModifier = new AnimationCurve(new Keyframe(-90.0f, 1.0f), new Keyframe(0.0f, 1.0f), new Keyframe(90.0f, 0.0f));
+            public AnimationCurve SlopeCurveModifier = new AnimationCurve(new Keyframe(-90.0f, 1.0f), new Keyframe(0.0f, 1.0f), new Keyframe(90.0f, 1.0f));
             [HideInInspector] public float CurrentTargetSpeed = 8f;
 
 #if !MOBILE_INPUT
@@ -50,7 +50,7 @@ namespace UnityStandardAssets.Characters.FirstPerson {
         private float m_YRotation;
         private Vector3 m_GroundContactNormal;
         private bool m_Jump, m_PreviouslyGrounded, m_Jumping; public bool m_IsGrounded;
-        private float airControlFactor = 30f;
+        private float airControlFactor = 20f;
 
         LayerMask layer_mask;
 
@@ -85,7 +85,7 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             mouseLook.Init(transform, cam.transform);
             string[] goodLayers = { "PlanetoidPlyaerCollision" };
             layer_mask = ~LayerMask.GetMask(goodLayers);
-            movementSettings.maxMidairHorizSpeed = Mathf.Max(movementSettings.ForwardSpeed, movementSettings.BackwardSpeed, movementSettings.StrafeSpeed);
+            movementSettings.maxMidairHorizSpeed = movementSettings.ForwardSpeed * 2f;
         }
 
 
@@ -97,7 +97,14 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             }
         }
 
-
+        void NormalizeHorizontalSpeed() {
+            Vector3 velInPlane = Vector3.ProjectOnPlane(rb.velocity, transform.up);
+            float verticalVel = Vector3.Dot(rb.velocity, transform.up);
+            if (velInPlane.magnitude > movementSettings.maxMidairHorizSpeed) {
+                velInPlane = velInPlane.normalized * movementSettings.maxMidairHorizSpeed;
+            }
+            rb.velocity = velInPlane + transform.up * verticalVel;
+        }
         private void FixedUpdate() {
             GroundCheck();
             Vector2 input = GetInput();
@@ -107,12 +114,13 @@ namespace UnityStandardAssets.Characters.FirstPerson {
                 Vector3 desiredMove = cam.transform.forward * input.y + cam.transform.right * input.x;
                 desiredMove = Vector3.ProjectOnPlane(desiredMove, m_GroundContactNormal).normalized;
 
-                desiredMove *= movementSettings.CurrentTargetSpeed;
+                desiredMove *= movementSettings.ForwardSpeed;
 
                 if (m_IsGrounded) {
                     rb.AddForce(desiredMove * SlopeMultiplier(), ForceMode.Impulse);
                 } else if (advancedSettings.airControl) {
-                    rb.AddForce(desiredMove * airControlFactor * SlopeMultiplier());
+                    rb.AddForce(desiredMove * airControlFactor);
+                    NormalizeHorizontalSpeed();
                 }
             }
 
