@@ -10,8 +10,7 @@ using System.Runtime.CompilerServices;
 using Debug = UnityEngine.Debug;
 using UnityEditor;
 
-public class ObjectPipeline : MonoBehaviour
-{
+public class ObjectPipeline : MonoBehaviour {
     [Header("Asset Stuff")]
     public bool WINDOWS = true;
     public GameObject prefab_root;
@@ -28,15 +27,12 @@ public class ObjectPipeline : MonoBehaviour
     /// Retrieves selected folder on Project view.
     /// </summary>
     /// <returns></returns>
-    public static string GetSelectedPathOrFallback(string provided_path)
-    {
+    public static string GetSelectedPathOrFallback(string provided_path) {
         string path = provided_path;
 
-        foreach (UnityEngine.Object obj in Selection.GetFiltered(typeof(UnityEngine.Object), SelectionMode.Assets))
-        {
+        foreach (UnityEngine.Object obj in Selection.GetFiltered(typeof(UnityEngine.Object), SelectionMode.Assets)) {
             path = AssetDatabase.GetAssetPath(obj);
-            if (!string.IsNullOrEmpty(path) && File.Exists(path))
-            {
+            if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
                 path = Path.GetDirectoryName(path);
                 break;
             }
@@ -47,46 +43,36 @@ public class ObjectPipeline : MonoBehaviour
     /// <summary>
     /// Recursively gather all files under the given path including all its subfolders.
     /// </summary>
-    public static IEnumerable<string> GetFiles(string path, string ignore_path="$$$$$")
-    {
+    public static IEnumerable<string> GetFiles(string path, string ignore_path = "$$$$$") {
         Queue<string> queue = new Queue<string>();
         queue.Enqueue(path);
-        while (queue.Count > 0)
-        {
+        while (queue.Count > 0) {
             path = queue.Dequeue();
-            try
-            {
-                foreach (string subDir in Directory.GetDirectories(path))
-                {
+            try {
+                foreach (string subDir in Directory.GetDirectories(path)) {
                     if (!subDir.Contains(ignore_path))
                         queue.Enqueue(subDir);
                 }
             }
-            catch (System.Exception ex)
-            {
+            catch (System.Exception ex) {
                 Debug.LogError(ex.Message);
             }
             string[] files = null;
-            try
-            {
+            try {
                 files = Directory.GetFiles(path);
             }
-            catch (System.Exception ex)
-            {
+            catch (System.Exception ex) {
                 Debug.LogError(ex.Message);
             }
-            if (files != null)
-            {
-                for (int i = 0; i < files.Length; i++)
-                {
+            if (files != null) {
+                for (int i = 0; i < files.Length; i++) {
                     yield return files[i];
                 }
             }
         }
     }
 
-    public void Process()
-    {
+    public void Process() {
         string slash = WINDOWS ? "\\" : "/";
         string asset_path = $"Assets{slash}Objects{slash}Import";
         string target_path = $"Assets{slash}Objects{slash}Prefabs{slash}Planetoids";
@@ -98,13 +84,13 @@ public class ObjectPipeline : MonoBehaviour
         // It excludes .meta files from all the gathers file list.
         var assetFiles = GetFiles(GetSelectedPathOrFallback(asset_path), ignore_path).Where(s => s.Contains(".meta") == false);
 
-        foreach (string f in assetFiles)
-        {
+        foreach (string f in assetFiles) {
             Debug.Log("Files: " + f);
             GameObject g = (GameObject)AssetDatabase.LoadAssetAtPath(f, typeof(GameObject));
             string g_name = g.name;
+            print(g_name);
             g = Instantiate(g);
-            print(g.GetComponentInChildren<MeshFilter>());
+            //print(g.GetComponentInChildren<MeshFilter>());
             GameObject main_obj = Instantiate(PrefabUtility.SaveAsPrefabAsset(g, $"{primitive_target_path}{slash}{g_name}.prefab"));
             main_obj.name = g_name;
             main_obj.layer = LayerMask.NameToLayer("PlanetoidCollision");
@@ -118,9 +104,8 @@ public class ObjectPipeline : MonoBehaviour
 
             Bounds extreme_bounds = new Bounds(Vector3.zero, Vector3.positiveInfinity);
             bool bounds_set = false;
-            foreach (MeshFilter mf in main_obj.GetComponentsInChildren<MeshFilter>())
-            {
-                print(mf.name);
+            foreach (MeshFilter mf in main_obj.GetComponentsInChildren<MeshFilter>()) {
+                //print(mf.name);
                 var mesh = mf.sharedMesh;
                 var mc = mf.gameObject.AddComponent<MeshCollider>();
                 mc.convex = true;
@@ -137,14 +122,11 @@ public class ObjectPipeline : MonoBehaviour
                 player_mc.sharedMesh = mesh;
                 player_mc.sharedMaterial = player_collider_material;
                 Bounds b = mf.GetComponent<MeshRenderer>().bounds;
-                if (!bounds_set)
-                {
-                    print("HAHAHA: " + b.size);
+                if (!bounds_set) {
+                    //print("HAHAHA: " + b.size);
                     extreme_bounds = b;
                     bounds_set = true;
-                }
-                else
-                {
+                } else {
                     extreme_bounds.SetMinMax(Vector3.Min(extreme_bounds.min, b.min), Vector3.Max(extreme_bounds.max, b.max));
                 }
             }
@@ -154,7 +136,7 @@ public class ObjectPipeline : MonoBehaviour
             new_parent.name = main_obj.name;
 
             Vector3 size = extreme_bounds.size;
-            print("EXTENTS: " + size * 10000000f);
+            //print("EXTENTS: " + size * 10000000f);
             float max_dim = new float[] { size[0], size[1], size[2] }.Max();
             float scale_factor = target_size / max_dim;
             main_obj.transform.localScale *= scale_factor;
@@ -169,8 +151,7 @@ public class ObjectPipeline : MonoBehaviour
 
         var planetoidFiles = GetFiles(GetSelectedPathOrFallback(target_path)).Where(s => s.Contains(".meta") == false);
         planetoid_list.planetoids = new List<GameObject>();
-        foreach (string f in planetoidFiles)
-        {
+        foreach (string f in planetoidFiles) {
             GameObject g = (GameObject)AssetDatabase.LoadAssetAtPath(f, typeof(GameObject));
             if (!planetoid_list.planetoids.Contains(g))
                 planetoid_list.planetoids.Add(g);
@@ -178,18 +159,15 @@ public class ObjectPipeline : MonoBehaviour
     }
 
 
-    public void Spawn()
-    {
+    public void Spawn() {
         Instantiate(prefab_root);
     }
 }
 
 [CanEditMultipleObjects]
 [CustomEditor(typeof(ObjectPipeline))]
-public class ObjectPipelinerEditor : Editor
-{
-    public override void OnInspectorGUI()
-    {
+public class ObjectPipelinerEditor : Editor {
+    public override void OnInspectorGUI() {
         DrawDefaultInspector();
 
         var scripts = targets.OfType<ObjectPipeline>();

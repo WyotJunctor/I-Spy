@@ -357,7 +357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 859ac26a55b604f4ba9132db986d8c96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WINDOWS: 1
+  WINDOWS: 0
   prefab_root: {fileID: 5220001918062960268, guid: a556be147cd4d6a4295742f6e7aa8823,
     type: 3}
   planetoid_list: {fileID: 11400000, guid: 1ee5d793bfbb0344a9bec0431df5b4e5, type: 2}
