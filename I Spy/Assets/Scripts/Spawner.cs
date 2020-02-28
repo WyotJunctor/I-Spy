@@ -23,7 +23,7 @@ public class Spawner : MonoBehaviour {
                 pos = new Vector3(x, y, z);
             } while (pos.magnitude <= minSpawnDistance);
             GameObject obj = Instantiate(randomObject(), pos, randomAngle());
-            obj.transform.localScale = Vector3.one * Random.Range(7f, 15f);
+            obj.transform.localScale = Vector3.one * Random.Range(12f, 18.5f);
             obj.transform.parent = transform;
             obj.GetComponentInChildren<Rigidbody>().rotation = randomAngle();
             //print(obj.name);

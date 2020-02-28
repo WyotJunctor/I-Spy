@@ -13,6 +13,7 @@ using UnityEditor;
 public class ObjectPipeline : MonoBehaviour {
     [Header("Asset Stuff")]
     public bool WINDOWS = true;
+    public bool dump_planetoids = false;
     public GameObject prefab_root;
     public PlanetoidScriptableObjectList planetoid_list;
     public float target_size = 4f;
@@ -90,6 +91,9 @@ public class ObjectPipeline : MonoBehaviour {
             string g_name = g.name;
             print(g_name);
             g = Instantiate(g);
+            foreach (var comp in g.GetComponentsInChildren<Component>())
+                if (!(comp is Transform) && !(comp is MeshFilter) && !(comp is MeshRenderer))
+                    DestroyImmediate(comp);
             //print(g.GetComponentInChildren<MeshFilter>());
             GameObject main_obj = Instantiate(PrefabUtility.SaveAsPrefabAsset(g, $"{primitive_target_path}{slash}{g_name}.prefab"));
             main_obj.name = g_name;
@@ -121,6 +125,8 @@ public class ObjectPipeline : MonoBehaviour {
                 player_mc.convex = false;
                 player_mc.sharedMesh = mesh;
                 player_mc.sharedMaterial = player_collider_material;
+                player_collider.transform.localScale = Vector3.one;
+                player_collider.transform.localRotation = Quaternion.identity;
                 Bounds b = mf.GetComponent<MeshRenderer>().bounds;
                 if (!bounds_set) {
                     //print("HAHAHA: " + b.size);
@@ -145,10 +151,15 @@ public class ObjectPipeline : MonoBehaviour {
             string ext = Path.GetExtension(f);
             AssetDatabase.MoveAsset(f, $"{imported_path}{slash}{g_name}{ext}");
 
+            if (!dump_planetoids)
+                planetoid_list.planetoids.Add(planetoid);
+
             DestroyImmediate(new_parent);
             DestroyImmediate(g);
         }
 
+        if (!dump_planetoids)
+            return;
         var planetoidFiles = GetFiles(GetSelectedPathOrFallback(target_path)).Where(s => s.Contains(".meta") == false);
         planetoid_list.planetoids = new List<GameObject>();
         foreach (string f in planetoidFiles) {
