@@ -75,19 +75,22 @@ public class ObjectPipeline : MonoBehaviour {
 
     public void Process() {
         string slash = WINDOWS ? "\\" : "/";
-        string asset_path = $"Assets{slash}Objects{slash}Import";
+        string source_path = $"Assets{slash}Objects{slash}Import";
         string target_path = $"Assets{slash}Objects{slash}Prefabs{slash}Planetoids";
         string primitive_target_path = $"Assets{slash}Objects{slash}Prefabs{slash}PrimitivePrefabs";
-        string imported_path = $"{asset_path}{slash}Imported";
+        string imported_path = $"Assets{slash}Objects{slash}Import";
         string ignore_path = $"Import{slash}Imported";
 
         // You can either filter files to get only neccessary files by its file extension using LINQ.
         // It excludes .meta files from all the gathers file list.
-        var assetFiles = GetFiles(GetSelectedPathOrFallback(asset_path), ignore_path).Where(s => s.Contains(".meta") == false);
+        var assetFiles = GetFiles(GetSelectedPathOrFallback(source_path), ignore_path).Where(s => s.Contains(".meta") == false);
 
         foreach (string f in assetFiles) {
             Debug.Log("Files: " + f);
             GameObject g = (GameObject)AssetDatabase.LoadAssetAtPath(f, typeof(GameObject));
+            if (g == null) {
+                continue;
+            }
             string g_name = g.name;
             print(g_name);
             g = Instantiate(g);
@@ -160,18 +163,20 @@ public class ObjectPipeline : MonoBehaviour {
 
         if (!dump_planetoids)
             return;
-        var planetoidFiles = GetFiles(GetSelectedPathOrFallback(target_path)).Where(s => s.Contains(".meta") == false);
         planetoid_list.planetoids = new List<GameObject>();
+        Populate();
+    }
+
+
+    public void Populate() {
+        string slash = WINDOWS ? "\\" : "/";
+        string target_path = $"Assets{slash}Objects{slash}Prefabs{slash}Planetoids";
+        var planetoidFiles = GetFiles(GetSelectedPathOrFallback(target_path)).Where(s => s.Contains(".meta") == false);
         foreach (string f in planetoidFiles) {
             GameObject g = (GameObject)AssetDatabase.LoadAssetAtPath(f, typeof(GameObject));
             if (!planetoid_list.planetoids.Contains(g))
                 planetoid_list.planetoids.Add(g);
         }
-    }
-
-
-    public void Spawn() {
-        Instantiate(prefab_root);
     }
 }
 
@@ -185,9 +190,9 @@ public class ObjectPipelinerEditor : Editor {
         if (GUILayout.Button("GARBULATE"))
             foreach (var script in scripts)
                 script.Process();
-        if (GUILayout.Button("COMPATULATE"))
+        if (GUILayout.Button("POPULATE"))
             foreach (var script in scripts)
-                script.Spawn();
+                script.Populate();
     }
 }
 #endif
