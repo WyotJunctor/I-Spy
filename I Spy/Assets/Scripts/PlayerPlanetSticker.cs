@@ -9,41 +9,45 @@ public class PlayerPlanetSticker : MonoBehaviour {
     bool pivoted;
     float lerp_speed = 10;
 
+    GameObject pivotIndicator;
     // Start is called before the first frame update
     void Start() {
         planet_pivot = transform.FindDeepParent("planet_pivot");
         player_pivot = transform.FindDeepParent("player_pivot");
         player = GetComponent<RigidbodyFirstPersonController>();
+        pivotIndicator = transform.parent.Find("PivotIndicator").gameObject;
     }
 
     // Update is called once per frame
     void FixedUpdate() {
         if (!player.m_IsGrounded) {
             if (planet_pivot.parent != player_pivot.parent) {
-                //print("player unpivoting from " + planet_pivot.parent.gameObject.name);
+                print("player unpivoting from " + planet_pivot.parent.gameObject.name);
             }
             planet_pivot.parent = player_pivot.parent;
             pivoted = false;
+            pivotIndicator.SetActive(false);
         }
         if (pivoted) {
             player_pivot.position = planet_pivot.position;
             //player_pivot.position = Vector3.Lerp(transform.position, planet_pivot.position, Time.deltaTime * lerp_speed);
-            player_pivot.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(planet_pivot.forward, Vector3.up));
+            player_pivot.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(planet_pivot.forward, transform.up));
         }
     }
 
     private void OnCollisionEnter(Collision collision) {
-        //print("player collided with " + collision.collider.gameObject.name);
+        print("player collided with " + collision.collider.gameObject.name);
         if (!player.m_IsGrounded) {
-            //print("player colliding and not grounded");
+            print("player colliding and not grounded - probably the underside");
             return;
         }
         if (collision.collider.transform == planet_pivot.parent) {
-            //print("player colliding again with previous pivot");
+            print("player colliding again with previous pivot");
             return;
         }
-        //print("player pivoting on " + collision.collider.gameObject.name);
+        print("player pivoting on " + collision.collider.gameObject.name);
         pivoted = true;
+        pivotIndicator.SetActive(true);
         planet_pivot.parent = collision.collider.transform;
         planet_pivot.position = transform.position;
         player_pivot.position = transform.position;

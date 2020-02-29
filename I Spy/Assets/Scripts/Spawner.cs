@@ -6,6 +6,8 @@ public class Spawner : MonoBehaviour {
     public PlanetoidScriptableObjectList planetoid_list;
     List<GameObject> objects;
     float minSpawnDistance = 30f;
+    public float minSpawnSize;
+    public float maxSpawnSize;
     public float density;
     const float smallification = 0.0000001f;
     public float maxSpawnDistance;
@@ -23,7 +25,7 @@ public class Spawner : MonoBehaviour {
                 pos = new Vector3(x, y, z);
             } while (pos.magnitude <= minSpawnDistance);
             GameObject obj = Instantiate(randomObject(), pos, randomAngle());
-            obj.transform.localScale = Vector3.one * Random.Range(10f, 18.5f);
+            obj.transform.localScale = Vector3.one * Random.Range(minSpawnSize, maxSpawnSize);
             obj.transform.parent = transform;
             obj.GetComponentInChildren<Rigidbody>().rotation = randomAngle();
             //print(obj.name);

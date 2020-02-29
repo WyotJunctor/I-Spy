@@ -8,23 +8,10 @@ namespace UnityStandardAssets.Characters.FirstPerson {
     public class RigidbodyFirstPersonController : MonoBehaviour {
         [Serializable]
         public class MovementSettings {
-            public float ForwardSpeed = 8.0f;   // Speed when walking forward
-            public float BackwardSpeed = 4.0f;  // Speed when walking backwards
-            public float StrafeSpeed = 4.0f;    // Speed when walking sideways
-            public float RunMultiplier = 2.0f;   // Speed when sprinting
-            [HideInInspector] public float max_speed;
+            public float speed = 8.0f;   // Speed when walking forward
             [HideInInspector] public float maxMidairHorizSpeed;
-            public KeyCode RunKey = KeyCode.LeftShift;
             public float JumpForce = 30f;
             public AnimationCurve SlopeCurveModifier = new AnimationCurve(new Keyframe(-90.0f, 1.0f), new Keyframe(0.0f, 1.0f), new Keyframe(90.0f, 1.0f));
-            [HideInInspector] public float CurrentTargetSpeed = 8f;
-
-#if !MOBILE_INPUT
-            private bool m_Running;
-            public bool Running {
-                get { return m_Running; }
-            }
-#endif
         }
 
 
@@ -47,7 +34,6 @@ namespace UnityStandardAssets.Characters.FirstPerson {
 
         private Rigidbody rb;
         private CapsuleCollider m_Capsule;
-        private float m_YRotation;
         private Vector3 m_GroundContactNormal;
         private bool m_Jump, m_PreviouslyGrounded, m_Jumping; public bool m_IsGrounded;
         private float airControlFactor = 20f;
@@ -67,17 +53,6 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             get { return m_Jumping; }
         }
 
-        public bool Running {
-            get
-            {
-#if !MOBILE_INPUT
-                return movementSettings.Running;
-#else
-	            return false;
-#endif
-            }
-        }
-
 
         private void Start() {
             rb = GetComponent<Rigidbody>();
@@ -85,7 +60,7 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             mouseLook.Init(transform, cam.transform);
             string[] goodLayers = { "PlanetoidPlyaerCollision" };
             layer_mask = ~LayerMask.GetMask(goodLayers);
-            movementSettings.maxMidairHorizSpeed = movementSettings.ForwardSpeed * 2f;
+            movementSettings.maxMidairHorizSpeed = movementSettings.speed * 2f;
         }
 
 
@@ -97,7 +72,7 @@ namespace UnityStandardAssets.Characters.FirstPerson {
             }
         }
 
-        void NormalizeHorizontalSpeed() {
+        void NormalizeMotion() {
             Vector3 velInPlane = Vector3.ProjectOnPlane(rb.velocity, transform.up);
             float verticalVel = Vector3.Dot(rb.velocity, transform.up);
             if (velInPlane.magnitude > movementSettings.maxMidairHorizSpeed) {
@@ -114,13 +89,13 @@ namespace UnityStandardAssets.Characters.FirstPerson {
                 Vector3 desiredMove = cam.transform.forward * input.y + cam.transform.right * input.x;
                 desiredMove = Vector3.ProjectOnPlane(desiredMove, m_GroundContactNormal).normalized;
 
-                desiredMove *= movementSettings.ForwardSpeed;
+                desiredMove *= movementSettings.speed;
 
                 if (m_IsGrounded) {
                     rb.AddForce(desiredMove * SlopeMultiplier(), ForceMode.Impulse);
                 } else if (advancedSettings.airControl) {
                     rb.AddForce(desiredMove * airControlFactor);
-                    NormalizeHorizontalSpeed();
+                    NormalizeMotion();
                 }
             }
 
@@ -180,9 +155,6 @@ namespace UnityStandardAssets.Characters.FirstPerson {
         private void RotateView() {
             //avoids the mouse looking if the game is effectively paused
             if (Mathf.Abs(Time.timeScale) < float.Epsilon) return;
-
-            // get the rotation before it's changed
-            float oldYRotation = transform.eulerAngles.y;
 
             mouseLook.LookRotation(transform, cam.transform);
         }
