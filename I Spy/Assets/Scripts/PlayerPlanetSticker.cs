@@ -9,6 +9,9 @@ public class PlayerPlanetSticker : MonoBehaviour {
     bool pivoted;
     float lerp_speed = 10;
 
+    float pivot_reset_checkpoint = -1, pivot_reset_interval = 1f;
+
+
     GameObject pivotIndicator;
     // Start is called before the first frame update
     void Start() {
@@ -33,6 +36,15 @@ public class PlayerPlanetSticker : MonoBehaviour {
             //player_pivot.position = Vector3.Lerp(transform.position, planet_pivot.position, Time.deltaTime * lerp_speed);
             player_pivot.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(planet_pivot.forward, transform.up));
         }
+
+        if (Time.time > pivot_reset_checkpoint) 
+        {
+            pivot_reset_checkpoint = Time.time + pivot_reset_interval;
+            planet_pivot.position = transform.position;
+            player_pivot.position = transform.position;
+            transform.position = player_pivot.position;
+        }
+
     }
 
     private void OnCollisionEnter(Collision collision) {
