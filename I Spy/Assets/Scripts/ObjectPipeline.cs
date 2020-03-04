@@ -77,13 +77,12 @@ public class ObjectPipeline : MonoBehaviour {
         string slash = WINDOWS ? "\\" : "/";
         string source_path = $"Assets{slash}Objects{slash}Import";
         string target_path = $"Assets{slash}Objects{slash}Prefabs{slash}Planetoids";
-        string primitive_target_path = $"Assets{slash}Objects{slash}Prefabs{slash}PrimitivePrefabs";
-        string imported_path = $"Assets{slash}Objects{slash}Import";
-        string ignore_path = $"Import{slash}Imported";
+        string primitive_target_path = $"Assets{slash}Objects{slash}Prefabs";
+        string imported_path = $"Assets{slash}Objects{slash}Imported";
 
         // You can either filter files to get only neccessary files by its file extension using LINQ.
         // It excludes .meta files from all the gathers file list.
-        var assetFiles = GetFiles(GetSelectedPathOrFallback(source_path), ignore_path).Where(s => s.Contains(".meta") == false);
+        var assetFiles = GetFiles(GetSelectedPathOrFallback(source_path)).Where(s => s.Contains(".meta") == false);
 
         foreach (string f in assetFiles) {
             Debug.Log("Files: " + f);
@@ -95,10 +94,11 @@ public class ObjectPipeline : MonoBehaviour {
             print(g_name);
             g = Instantiate(g);
             foreach (var comp in g.GetComponentsInChildren<Component>())
-                if (!(comp is Transform) && !(comp is MeshFilter) && !(comp is MeshRenderer))
+                if (!(comp is Transform || comp is MeshFilter || comp is MeshRenderer))
                     DestroyImmediate(comp);
-            //print(g.GetComponentInChildren<MeshFilter>());
+            string tmpPrefabPath = $"{primitive_target_path}{slash}{g_name}.prefab";
             GameObject main_obj = Instantiate(PrefabUtility.SaveAsPrefabAsset(g, $"{primitive_target_path}{slash}{g_name}.prefab"));
+            AssetDatabase.DeleteAsset(tmpPrefabPath);
             main_obj.name = g_name;
             main_obj.layer = LayerMask.NameToLayer("PlanetoidCollision");
 
@@ -112,7 +112,6 @@ public class ObjectPipeline : MonoBehaviour {
             Bounds extreme_bounds = new Bounds(Vector3.zero, Vector3.positiveInfinity);
             bool bounds_set = false;
             foreach (MeshFilter mf in main_obj.GetComponentsInChildren<MeshFilter>()) {
-                //print(mf.name);
                 var mesh = mf.sharedMesh;
                 var mc = mf.gameObject.AddComponent<MeshCollider>();
                 mc.convex = true;
@@ -132,7 +131,6 @@ public class ObjectPipeline : MonoBehaviour {
                 player_collider.transform.localRotation = Quaternion.identity;
                 Bounds b = mf.GetComponent<MeshRenderer>().bounds;
                 if (!bounds_set) {
-                    //print("HAHAHA: " + b.size);
                     extreme_bounds = b;
                     bounds_set = true;
                 } else {
