@@ -170,6 +170,7 @@ public class ObjectPipeline : MonoBehaviour {
         string slash = WINDOWS ? "\\" : "/";
         string target_path = $"Assets{slash}Objects{slash}Prefabs{slash}Planetoids";
         var planetoidFiles = GetFiles(GetSelectedPathOrFallback(target_path)).Where(s => s.Contains(".meta") == false);
+        planetoid_list.planetoids.Clear();
         foreach (string f in planetoidFiles) {
             GameObject g = (GameObject)AssetDatabase.LoadAssetAtPath(f, typeof(GameObject));
             if (!planetoid_list.planetoids.Contains(g)) {

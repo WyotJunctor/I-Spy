@@ -34,17 +34,17 @@ public class Spawner : MonoBehaviour {
             //    print(thing);
             //}
         }
+    }
 
-        int numObjectsFor(float dense, float dist) {
-            return (int)(dense * smallification * Mathf.Pow(dist, 3));
-        }
+    int numObjectsFor(float dense, float dist) {
+        return (int)(dense * smallification * Mathf.Pow(dist, 3));
+    }
 
-        GameObject randomObject() {
-            return objects[Random.Range(0, objects.Count)];
-        }
+    GameObject randomObject() {
+        return objects[Random.Range(0, objects.Count)];
+    }
 
-        Quaternion randomAngle() {
-            return Quaternion.Euler(Random.insideUnitSphere * 360);
-        }
+    Quaternion randomAngle() {
+        return Quaternion.Euler(Random.insideUnitSphere * 360);
     }
 }
