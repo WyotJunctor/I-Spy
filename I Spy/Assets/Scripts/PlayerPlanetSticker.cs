@@ -12,13 +12,11 @@ public class PlayerPlanetSticker : MonoBehaviour {
     float pivot_reset_checkpoint = -1, pivot_reset_interval = 1f;
 
 
-    GameObject pivotIndicator;
     // Start is called before the first frame update
     void Start() {
         planet_pivot = transform.FindDeepParent("planet_pivot");
         player_pivot = transform.FindDeepParent("player_pivot");
         player = GetComponent<RigidbodyFirstPersonController>();
-        pivotIndicator = transform.parent.Find("PivotIndicator").gameObject;
     }
 
     // Update is called once per frame
@@ -29,7 +27,6 @@ public class PlayerPlanetSticker : MonoBehaviour {
             }
             planet_pivot.parent = player_pivot.parent;
             pivoted = false;
-            pivotIndicator.SetActive(false);
         }
         if (pivoted) {
             player_pivot.position = planet_pivot.position;
@@ -37,8 +34,7 @@ public class PlayerPlanetSticker : MonoBehaviour {
             player_pivot.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(planet_pivot.forward, transform.up));
         }
 
-        if (Time.time > pivot_reset_checkpoint) 
-        {
+        if (Time.time > pivot_reset_checkpoint) {
             pivot_reset_checkpoint = Time.time + pivot_reset_interval;
             planet_pivot.position = transform.position;
             player_pivot.position = transform.position;
@@ -59,7 +55,6 @@ public class PlayerPlanetSticker : MonoBehaviour {
         }
         print("player pivoting on " + collision.collider.gameObject.name);
         pivoted = true;
-        pivotIndicator.SetActive(true);
         planet_pivot.parent = collision.collider.transform;
         planet_pivot.position = transform.position;
         player_pivot.position = transform.position;
