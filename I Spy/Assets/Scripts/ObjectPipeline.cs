@@ -97,7 +97,7 @@ public class ObjectPipeline : MonoBehaviour {
                 if (!(comp is Transform || comp is MeshFilter || comp is MeshRenderer))
                     DestroyImmediate(comp);
             string tmpPrefabPath = $"{primitive_target_path}{slash}{g_name}.prefab";
-            GameObject main_obj = Instantiate(PrefabUtility.SaveAsPrefabAsset(g, $"{primitive_target_path}{slash}{g_name}.prefab"));
+            GameObject main_obj = Instantiate(PrefabUtility.SaveAsPrefabAsset(g, tmpPrefabPath));
             AssetDatabase.DeleteAsset(tmpPrefabPath);
             main_obj.name = g_name;
             main_obj.layer = LayerMask.NameToLayer("PlanetoidCollision");
@@ -172,8 +172,9 @@ public class ObjectPipeline : MonoBehaviour {
         var planetoidFiles = GetFiles(GetSelectedPathOrFallback(target_path)).Where(s => s.Contains(".meta") == false);
         foreach (string f in planetoidFiles) {
             GameObject g = (GameObject)AssetDatabase.LoadAssetAtPath(f, typeof(GameObject));
-            if (!planetoid_list.planetoids.Contains(g))
+            if (!planetoid_list.planetoids.Contains(g)) {
                 planetoid_list.planetoids.Add(g);
+            }
         }
     }
 }

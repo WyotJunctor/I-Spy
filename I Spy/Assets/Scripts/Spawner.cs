@@ -31,7 +31,7 @@ public class Spawner : MonoBehaviour {
             //print(obj.name);
             //List<Vector3> randomTri = obj.GetComponent<ObjectInfo>().getRandomTri();
             //foreach (Vector3 thing in randomTri) {
-            //    print(thing * 100f);
+            //    print(thing);
             //}
         }
 
