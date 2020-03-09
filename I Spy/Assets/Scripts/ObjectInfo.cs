@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 public class ObjectInfo : MonoBehaviour {
     public List<Mesh> meshes;
+    public Dictionary<int, PolygonMod> specialPolygons;
     void Awake() {
         List<MeshFilter> mfs = new List<MeshFilter>(GetComponentsInChildren<MeshFilter>());
         foreach (MeshFilter mf in mfs) {

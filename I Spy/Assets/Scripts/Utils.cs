@@ -73,11 +73,6 @@ public static class Utils {
         return mesh_filter.transform.TransformPoint(nearestVertex);
 
     }
-
-    public static void SetGravity(Vector3 dir) {
-        float gravMagnitude = Physics.gravity.magnitude;
-        Physics.gravity = dir.normalized * gravMagnitude;
-    }
 }
 
 public static class TransformDeepChildExtension {
