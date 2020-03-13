@@ -27,9 +27,9 @@ public class PlayerPlanetSticker : MonoBehaviour {
         }
         if (pivoted) {
             player_pivot.position = planet_pivot.position;
+            player_pivot.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(planet_pivot.forward, transform.up));
             //player_pivot.rotation = planet_pivot.rotation;
             //Game.SetGravity(-transform.up);
-            player_pivot.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(planet_pivot.forward, transform.up));
         }
 
         if (Time.time > pivot_reset_checkpoint) {

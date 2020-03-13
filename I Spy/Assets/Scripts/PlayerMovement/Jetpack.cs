@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Jetpack : MonoBehaviour {
-    float thrust = 500f;
+    float thrust = 500f * 45f;
 
     Rigidbody rb;
 
@@ -11,9 +11,9 @@ public class Jetpack : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
     }
 
-    void Update() {
+    void FixedUpdate() {
         if (Input.GetButton("Jump")) {
-            rb.AddForce(transform.up * thrust);
+            rb.AddForce(transform.up * thrust * Time.fixedDeltaTime);
         }
     }
 }

@@ -167,6 +167,24 @@ namespace UnityStandardAssets.Characters.FirstPerson {
                                    ((m_Capsule.height / 2f) - m_Capsule.radius) + advancedSettings.groundCheckDistance, layer_mask, QueryTriggerInteraction.Ignore)) {
                 m_IsGrounded = true;
                 m_GroundContactNormal = hitInfo.normal;
+                if (hitInfo.triangleIndex < 0)
+                    return;
+                MeshCollider meshCollider = hitInfo.collider as MeshCollider;
+                if (meshCollider == null || meshCollider.sharedMesh == null)
+                    return;
+                Mesh mesh = meshCollider.sharedMesh;
+                Vector3[] vertices = mesh.vertices;
+                int[] triangles = mesh.triangles;
+                Vector3 p0 = vertices[triangles[hitInfo.triangleIndex * 3 + 0]];
+                Vector3 p1 = vertices[triangles[hitInfo.triangleIndex * 3 + 1]];
+                Vector3 p2 = vertices[triangles[hitInfo.triangleIndex * 3 + 2]];
+                Transform hitTransform = hitInfo.collider.transform;
+                p0 = hitTransform.TransformPoint(p0);
+                p1 = hitTransform.TransformPoint(p1);
+                p2 = hitTransform.TransformPoint(p2);
+                Debug.DrawLine(p0, p1);
+                Debug.DrawLine(p1, p2);
+                Debug.DrawLine(p2, p0);
             } else {
                 m_IsGrounded = false;
                 m_GroundContactNormal = transform.up;

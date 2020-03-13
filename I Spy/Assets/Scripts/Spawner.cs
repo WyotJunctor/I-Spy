@@ -28,11 +28,6 @@ public class Spawner : MonoBehaviour {
             obj.transform.localScale = Vector3.one * Random.Range(minSpawnSize, maxSpawnSize);
             obj.transform.parent = transform;
             obj.GetComponentInChildren<Rigidbody>().rotation = randomAngle();
-            //print(obj.name);
-            //List<Vector3> randomTri = obj.GetComponent<ObjectInfo>().getRandomTri();
-            //foreach (Vector3 thing in randomTri) {
-            //    print(thing);
-            //}
         }
     }
 
